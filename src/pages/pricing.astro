@@ -1,0 +1,149 @@
+---
+// Pricing Page - Fetches content from Sanity CMS
+import Layout from '../layouts/Layout.astro';
+import { sanityFetch } from '../lib/sanity';
+
+// Types
+interface Plan {
+  name: string;
+  price: string;
+  billingPeriod: string;
+  description: string;
+  highlighted: boolean;
+  ctaText: string;
+  ctaLink: string;
+  features: string[];
+}
+
+interface PricingPage {
+  pageTitle: string;
+  pageDescription: string;
+  plans: Plan[];
+}
+
+// Fetch pricing content from Sanity
+let pricing: PricingPage | null = null;
+
+try {
+  pricing = await sanityFetch<PricingPage>(`
+    *[_type == "pricing"][0] {
+      pageTitle,
+      pageDescription,
+      plans[] {
+        name,
+        price,
+        billingPeriod,
+        description,
+        highlighted,
+        ctaText,
+        ctaLink,
+        features
+      }
+    }
+  `);
+} catch (error) {
+  console.error('Error fetching pricing from Sanity:', error);
+}
+
+// Fallback content
+const content = pricing || {
+  pageTitle: "Simple, Transparent Pricing",
+  pageDescription: "Choose the plan that works best for you",
+  plans: [
+    {
+      name: "Free",
+      price: "$0",
+      billingPeriod: "forever",
+      description: "Perfect for getting started",
+      highlighted: false,
+      ctaText: "Get Started",
+      ctaLink: "/signup",
+      features: ["5 demos per month", "Basic analytics", "Watermark on demos"]
+    },
+    {
+      name: "Pro",
+      price: "$29",
+      billingPeriod: "per month",
+      description: "For growing teams",
+      highlighted: true,
+      ctaText: "Start Free Trial",
+      ctaLink: "/signup?plan=pro",
+      features: ["Unlimited demos", "Advanced analytics", "No watermark", "Custom branding", "Priority support"]
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      billingPeriod: "contact us",
+      description: "For large organizations",
+      highlighted: false,
+      ctaText: "Contact Sales",
+      ctaLink: "/contact",
+      features: ["Everything in Pro", "SSO & SAML", "Dedicated support", "Custom integrations", "SLA guarantee"]
+    }
+  ]
+};
+---
+
+<Layout title="Pricing - Layerpath">
+  <main class="py-20">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          {content.pageTitle}
+        </h1>
+        <p class="text-xl text-gray-600">
+          {content.pageDescription}
+        </p>
+      </div>
+
+      <!-- Pricing Cards -->
+      <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        {content.plans?.map((plan) => (
+          <div
+            class={`rounded-2xl p-8 ${
+              plan.highlighted
+                ? 'bg-blue-600 text-white ring-4 ring-blue-600 ring-offset-2'
+                : 'bg-white border border-gray-200'
+            }`}
+          >
+            <h3 class={`text-xl font-semibold mb-2 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+              {plan.name}
+            </h3>
+            <p class={`text-sm mb-4 ${plan.highlighted ? 'text-blue-100' : 'text-gray-500'}`}>
+              {plan.description}
+            </p>
+            <div class="mb-6">
+              <span class="text-4xl font-bold">{plan.price}</span>
+              <span class={`text-sm ${plan.highlighted ? 'text-blue-100' : 'text-gray-500'}`}>
+                {' '}{plan.billingPeriod}
+              </span>
+            </div>
+            <a
+              href={plan.ctaLink}
+              class={`block text-center py-3 px-6 rounded-lg font-semibold transition ${
+                plan.highlighted
+                  ? 'bg-white text-blue-600 hover:bg-gray-100'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {plan.ctaText}
+            </a>
+            <ul class="mt-8 space-y-3">
+              {plan.features?.map((feature) => (
+                <li class="flex items-center gap-2">
+                  <svg class={`w-5 h-5 ${plan.highlighted ? 'text-blue-200' : 'text-blue-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                  <span class={plan.highlighted ? 'text-blue-100' : 'text-gray-600'}>
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+</Layout>

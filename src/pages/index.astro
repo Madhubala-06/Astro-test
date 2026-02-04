@@ -1,0 +1,142 @@
+---
+// Homepage - Fetches content from Sanity CMS
+import Layout from '../layouts/Layout.astro';
+import { sanityFetch, urlFor } from '../lib/sanity';
+
+// Define TypeScript types for Sanity data
+interface Feature {
+  title: string;
+  description: string;
+  icon?: any;
+}
+
+interface PathAiBanner {
+  enabled: boolean;
+  title: string;
+  description: string;
+  link: string;
+}
+
+interface Homepage {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImage?: any;
+  ctaButtonText: string;
+  ctaButtonLink: string;
+  features: Feature[];
+  pathAiBanner: PathAiBanner;
+}
+
+// Fetch homepage content from Sanity
+// This runs at BUILD TIME (Static)
+let homepage: Homepage | null = null;
+
+try {
+  homepage = await sanityFetch<Homepage>(`
+    *[_type == "homepage"][0] {
+      heroTitle,
+      heroSubtitle,
+      heroImage,
+      ctaButtonText,
+      ctaButtonLink,
+      features[] {
+        title,
+        description,
+        icon
+      },
+      pathAiBanner {
+        enabled,
+        title,
+        description,
+        link
+      }
+    }
+  `);
+} catch (error) {
+  console.error('Error fetching from Sanity:', error);
+}
+
+// Fallback content if Sanity is not configured
+const content = homepage || {
+  heroTitle: "Create Interactive Product Demos",
+  heroSubtitle: "Turn any workflow into a step-by-step interactive guide. No coding required.",
+  ctaButtonText: "Start Free Trial",
+  ctaButtonLink: "/signup",
+  features: [
+    { title: "Easy Recording", description: "Capture your workflow with our browser extension" },
+    { title: "Auto-Generated Steps", description: "AI creates step-by-step guides automatically" },
+    { title: "Share Anywhere", description: "Embed demos on your website or share via link" },
+  ],
+  pathAiBanner: {
+    enabled: true,
+    title: "Introducing Path AI",
+    description: "Create demos 10x faster with AI",
+    link: "/path-ai"
+  }
+};
+---
+
+<Layout title="Layerpath - Interactive Product Demos">
+  <main class="min-h-screen">
+    <!-- Path AI Banner (if enabled) -->
+    {content.pathAiBanner?.enabled && (
+      <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 text-center">
+        <a href={content.pathAiBanner.link} class="hover:underline">
+          <span class="font-semibold">{content.pathAiBanner.title}</span>
+          <span class="mx-2">—</span>
+          <span>{content.pathAiBanner.description}</span>
+          <span class="ml-2">→</span>
+        </a>
+      </div>
+    )}
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-20 text-center">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+        {content.heroTitle}
+      </h1>
+      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        {content.heroSubtitle}
+      </p>
+      <a
+        href={content.ctaButtonLink}
+        class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
+      >
+        {content.ctaButtonText}
+      </a>
+
+      <!-- Hero Image (if exists in Sanity) -->
+      {homepage?.heroImage && (
+        <div class="mt-12">
+          <img
+            src={urlFor(homepage.heroImage).width(1200).url()}
+            alt="Product Demo"
+            class="rounded-xl shadow-2xl mx-auto"
+          />
+        </div>
+      )}
+    </section>
+
+    <!-- Features Section -->
+    <section class="bg-gray-50 py-20">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Why Choose Layerpath?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          {content.features?.map((feature) => (
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+              {feature.icon && (
+                <img
+                  src={urlFor(feature.icon).width(48).url()}
+                  alt={feature.title}
+                  class="w-12 h-12 mb-4"
+                />
+              )}
+              <h3 class="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p class="text-gray-600">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
