@@ -1,5 +1,4 @@
-import homepage from './homepage'
-import pricing from './pricing'
-import feature from './feature'
+import landingPage from './landingPage'
+import blogPost from './blogPost'
 
-export const schemaTypes = [homepage, pricing, feature]
+export const schemaTypes = [landingPage, blogPost]
