@@ -20,6 +20,9 @@ importers:
       astro:
         specifier: ^5.17.1
         version: 5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3)
+      lucide-astro:
+        specifier: ^0.556.0
+        version: 0.556.0(astro@5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3))
       tailwindcss:
         specifier: ^4.1.18
         version: 4.1.18
@@ -1180,6 +1183,12 @@ packages:
   lru-cache@11.2.5:
     resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
     engines: {node: 20 || >=22}
+
+  lucide-astro@0.556.0:
+    resolution: {integrity: sha512-ugMjPb45AMfkLCaduNSbyy5NQEKvB1TxVVMmUS4S6L807PMESnX0Qp+DIKHjbyjJmPXOyLRbrzvR3YikTK7brg==}
+    deprecated: 'Deprecated: Use `@lucide/astro`'
+    peerDependencies:
+      astro: '>=2.7.1'
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -2873,6 +2882,10 @@ snapshots:
   longest-streak@3.1.0: {}
 
   lru-cache@11.2.5: {}
+
+  lucide-astro@0.556.0(astro@5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3)):
+    dependencies:
+      astro: 5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3)
 
   magic-string@0.30.21:
     dependencies:

@@ -52,11 +52,14 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Technology', value: 'technology' },
+          { title: 'Travel - Must Visit Places', value: 'travel' },
+          { title: 'Food - Must Try Things', value: 'food' },
+          { title: 'Technology - Tech Tips', value: 'technology' },
+          { title: 'Photography', value: 'photography' },
+          { title: 'Personal - Life & Experiences', value: 'personal' },
+          { title: 'Guides - Travel Guides', value: 'guides' },
           { title: 'Design', value: 'design' },
-          { title: 'Personal', value: 'personal' },
           { title: 'Tutorial', value: 'tutorial' },
-          { title: 'News', value: 'news' },
         ],
       },
     }),

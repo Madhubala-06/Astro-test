@@ -1,0 +1,224 @@
+---
+import { Home, Compass, Utensils, Laptop, Camera, Heart, Plane, BookOpen, Moon, Sun } from 'lucide-astro';
+
+// Sidebar Navigation Component
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { icon: Home, label: 'Home', href: '/', hasNotification: false },
+  { icon: BookOpen, label: 'All Posts', href: '/blog', hasNotification: false },
+  { icon: Camera, label: 'Photography', href: '/photography', hasNotification: false },
+];
+
+// Blog Categories
+const blogCategories = [
+  { icon: Plane, label: 'Must Visit Places', href: '/blog?category=travel', hasNotification: true },
+  { icon: Utensils, label: 'Must Try Things', href: '/blog?category=food', hasNotification: false },
+  { icon: Laptop, label: 'Tech Tips', href: '/blog?category=technology', hasNotification: false },
+  { icon: Heart, label: 'Life & Experiences', href: '/blog?category=personal', hasNotification: false },
+  { icon: Compass, label: 'Travel Guides', href: '/blog?category=guides', hasNotification: false },
+];
+
+// Check if current path matches the nav item
+const isActive = (href: string) => {
+  if (href === '/') return currentPath === '/';
+  if (href === '/blog') return currentPath === '/blog' || currentPath === '/blog/';
+  if (href === '/photography') return currentPath === '/photography' || currentPath === '/photography/';
+  return false;
+};
+
+// Check if category is active
+const isCategoryActive = (category: string) => {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('category') === category;
+  }
+  return false;
+};
+---
+
+<aside class="fixed left-0 top-0 h-screen w-80 bg-gradient-to-b from-slate-800 to-slate-900 pl-8 hidden lg:block z-40">
+  <!-- Profile Section -->
+  <div class="mb-12 text-center">
+    <div class="w-28 h-28 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mx-auto mb-6 overflow-hidden border-4 border-slate-700">
+      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Madhubala" alt="Profile" class="w-full h-full object-cover" />
+    </div>
+    <h3 class="text-white font-bold text-xl mb-1">Madhu bala</h3>
+    <p class="text-gray-400 text-sm">madhubala.6mb@gmail.com</p>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="space-y-2 mb-8">
+    {navItems.map((item) => {
+      const active = isActive(item.href);
+      const IconComponent = item.icon;
+      return (
+        <a
+          href={item.href}
+          class={`flex items-center gap-4 px-5 py-3 rounded-l-full transition-all duration-300 relative ${
+            active
+              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+              : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+          }`}
+        >
+          <IconComponent 
+            size={22} 
+            class={active ? 'text-white' : 'text-gray-400'}
+            strokeWidth={2}
+          />
+          <span class={`font-medium text-base ${active ? 'font-semibold' : ''}`}>{item.label}</span>
+          {item.hasNotification && !active && (
+            <span class="absolute right-5 w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+          )}
+        </a>
+      );
+    })}
+  </nav>
+
+  <!-- Blog Categories Section -->
+  <div class="border-t border-slate-700/50 pt-6">
+    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 px-5">Categories</h3>
+    <nav class="space-y-1">
+      {blogCategories.map((item) => {
+        const IconComponent = item.icon;
+        return (
+          <a
+            href={item.href}
+            class="flex items-center gap-3 px-5 py-2.5 rounded-l-full transition-all duration-300 relative text-gray-400 hover:bg-slate-700/50 hover:text-white category-link"
+            data-category={item.href.split('category=')[1]}
+          >
+            <IconComponent 
+              size={20} 
+              class="text-gray-400"
+              strokeWidth={2}
+            />
+            <span class="font-medium text-sm">{item.label}</span>
+            {item.hasNotification && (
+              <span class="absolute right-5 w-2 h-2 bg-orange-500 rounded-full"></span>
+            )}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+
+  <!-- Dark Mode Toggle -->
+  <div class="absolute bottom-8 left-8 right-8">
+    <button 
+      id="theme-toggle"
+      class="flex items-center justify-between px-5 py-4 bg-slate-700/50 rounded-xl w-full hover:bg-slate-700/70 transition-colors"
+    >
+      <div class="flex items-center gap-3">
+        <Moon size={20} class="text-gray-400 theme-icon-dark" />
+        <Sun size={20} class="text-yellow-400 theme-icon-light hidden" />
+        <span class="text-gray-300 font-medium theme-text">Dark mode</span>
+      </div>
+      <div class="w-14 h-7 bg-slate-600 rounded-full relative cursor-pointer transition-colors theme-toggle-bg">
+        <div class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-lg transition-transform duration-300 theme-toggle-circle"></div>
+      </div>
+    </button>
+  </div>
+</aside>
+
+<script>
+  // Theme toggle functionality
+  const themeToggle = document.getElementById('theme-toggle');
+  const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+  const html = document.documentElement;
+  
+  // Check for saved theme preference or default to 'dark'
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  
+  // Apply theme on page load
+  if (currentTheme === 'light') {
+    html.classList.add('light-theme');
+    updateToggleUI(true);
+  }
+  
+  // Toggle theme function
+  function toggleTheme() {
+    const isLight = html.classList.toggle('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    updateToggleUI(isLight);
+  }
+  
+  // Desktop toggle
+  themeToggle?.addEventListener('click', toggleTheme);
+  
+  // Mobile toggle
+  mobileThemeToggle?.addEventListener('click', toggleTheme);
+  
+  // Update toggle UI
+  function updateToggleUI(isLight: boolean) {
+    // Desktop icons
+    const darkIcon = document.querySelector('.theme-icon-dark');
+    const lightIcon = document.querySelector('.theme-icon-light');
+    const themeText = document.querySelector('.theme-text');
+    const toggleBg = document.querySelector('.theme-toggle-bg');
+    const toggleCircle = document.querySelector('.theme-toggle-circle');
+    
+    // Mobile icons
+    const mobileDarkIcon = document.querySelector('.mobile-theme-icon-dark');
+    const mobileLightIcon = document.querySelector('.mobile-theme-icon-light');
+    
+    if (isLight) {
+      // Desktop
+      darkIcon?.classList.add('hidden');
+      lightIcon?.classList.remove('hidden');
+      if (themeText) themeText.textContent = 'Light mode';
+      toggleBg?.classList.add('bg-orange-500');
+      toggleBg?.classList.remove('bg-slate-600');
+      toggleCircle?.classList.add('translate-x-7');
+      
+      // Mobile
+      mobileDarkIcon?.classList.add('hidden');
+      mobileLightIcon?.classList.remove('hidden');
+    } else {
+      // Desktop
+      darkIcon?.classList.remove('hidden');
+      lightIcon?.classList.add('hidden');
+      if (themeText) themeText.textContent = 'Dark mode';
+      toggleBg?.classList.remove('bg-orange-500');
+      toggleBg?.classList.add('bg-slate-600');
+      toggleCircle?.classList.remove('translate-x-7');
+      
+      // Mobile
+      mobileDarkIcon?.classList.remove('hidden');
+      mobileLightIcon?.classList.add('hidden');
+    }
+  }
+  
+  // Re-apply theme after page transitions (for Astro View Transitions)
+  document.addEventListener('astro:after-swap', () => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+      html.classList.add('light-theme');
+    } else {
+      html.classList.remove('light-theme');
+    }
+  });
+</script>
+
+<!-- Mobile Sidebar -->
+<div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-800 border-b border-slate-700 p-4">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 overflow-hidden">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Madhubala" alt="Profile" class="w-full h-full" />
+      </div>
+      <span class="text-white font-bold">Madhu bala</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Mobile theme toggle -->
+      <button id="mobile-theme-toggle" class="text-white">
+        <Moon size={20} class="mobile-theme-icon-dark" />
+        <Sun size={20} class="mobile-theme-icon-light hidden" />
+      </button>
+      <button id="mobile-sidebar-btn" class="text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

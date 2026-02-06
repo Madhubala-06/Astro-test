@@ -9,8 +9,8 @@ interface Props {
 }
 
 const { 
-  title = 'MyBlog - Personal Blog & Portfolio',
-  description = 'Welcome to my personal blog where I share thoughts on technology, design, and life.'
+  title = 'Bilog - Travel, Tech & Design',
+  description = 'Checkout trends, travel tips, and tech news.'
 } = Astro.props;
 ---
 
@@ -21,17 +21,107 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <ViewTransitions />
+    <ViewTransitions fallback="none" />
+    
+    <!-- Theme initialization script (runs before page render to prevent flash) -->
+    <script is:inline>
+      // Apply theme immediately to prevent flash
+      const theme = localStorage.getItem('theme') || 'dark';
+      if (theme === 'light') {
+        document.documentElement.classList.add('light-theme');
+      }
+    </script>
     <style is:global>
       @import "tailwindcss";
 
       html {
         scroll-behavior: smooth;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         background: #0a0a0a;
+        transition: background-color 0.3s ease;
+      }
+
+      /* Light Theme Styles */
+      html.light-theme {
+        background: #f8fafc;
+      }
+
+      html.light-theme body {
+        background: #f8fafc;
+        color: #1e293b;
+      }
+
+      /* Light theme - Slate backgrounds */
+      html.light-theme .bg-slate-800 {
+        background-color: #f1f5f9 !important;
+      }
+
+      html.light-theme .bg-slate-900 {
+        background-color: #ffffff !important;
+      }
+
+      html.light-theme .bg-slate-700 {
+        background-color: #e2e8f0 !important;
+      }
+
+      html.light-theme .bg-slate-700\/50 {
+        background-color: rgba(226, 232, 240, 0.5) !important;
+      }
+
+      /* Light theme - Text colors */
+      html.light-theme .text-white {
+        color: #1e293b !important;
+      }
+
+      html.light-theme .text-gray-300 {
+        color: #475569 !important;
+      }
+
+      html.light-theme .text-gray-400 {
+        color: #64748b !important;
+      }
+
+      html.light-theme .text-gray-500 {
+        color: #94a3b8 !important;
+      }
+
+      /* Light theme - Borders */
+      html.light-theme .border-slate-700 {
+        border-color: #cbd5e1 !important;
+      }
+
+      html.light-theme .border-slate-600 {
+        border-color: #cbd5e1 !important;
+      }
+
+      /* Light theme - Sidebar gradient */
+      html.light-theme aside {
+        background: linear-gradient(to bottom, #ffffff, #f8fafc) !important;
+        border-right: 1px solid #e2e8f0;
+      }
+
+      /* Light theme - Keep orange accent */
+      html.light-theme .bg-orange-500,
+      html.light-theme .text-orange-500,
+      html.light-theme .border-orange-500 {
+        /* Keep orange colors as is */
+      }
+
+      /* Light theme - Hover states */
+      html.light-theme .hover\:bg-slate-700\/50:hover {
+        background-color: rgba(226, 232, 240, 0.5) !important;
+      }
+
+      html.light-theme .hover\:bg-slate-700:hover {
+        background-color: #e2e8f0 !important;
+      }
+
+      html.light-theme .hover\:text-white:hover {
+        color: #1e293b !important;
       }
 
       /* Custom animations */
@@ -160,7 +250,7 @@ const {
   </head>
   <body class="bg-black text-white">
     <Header />
-    <main class="min-h-screen pt-20">
+    <main class="min-h-screen pt-20 lg:pt-0">
       <slot />
     </main>
     <Footer />

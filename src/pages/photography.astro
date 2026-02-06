@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { sanityClient, urlFor } from '../lib/sanity';
+import { Camera, MapPin, Calendar } from 'lucide-astro';
+
+const albums = await sanityClient.fetch(`
+  *[_type == "photoAlbum"] | order(date desc) {
+    title,
+    "slug": slug.current,
+    description,
+    coverImage,
+    date,
+    location,
+    photos,
+    featured,
+    tags
+  }
+`) || [];
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+---
+
+<BaseLayout title="Photography - Bilog" description="Explore my photography collection">
+  <div class="flex min-h-screen bg-slate-800">
+    <Sidebar />
+
+    <div class="flex-1 lg:ml-80">
+      <!-- Header -->
+      <section class="py-12 px-8 bg-slate-800 border-b border-slate-700">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex items-center gap-4 mb-4 animate-fadeInUp">
+            <Camera size={40} class="text-orange-500" />
+            <h1 class="text-4xl font-bold text-white">Photography</h1>
+          </div>
+          <p class="text-xl text-gray-400 animate-fadeInUp animation-delay-100ms">
+            Capturing moments, one frame at a time
+          </p>
+        </div>
+      </section>
+
+      <!-- Albums Grid -->
+      <section class="py-12 px-8 bg-slate-800">
+        <div class="max-w-7xl mx-auto">
+          {albums.length === 0 ? (
+            <div class="text-center py-20">
+              <Camera size={80} class="mx-auto mb-6 text-gray-600" />
+              <h3 class="text-3xl font-bold text-white mb-4">No Albums Yet</h3>
+              <p class="text-gray-400 text-lg mb-6">Create your first photo album in Sanity Studio</p>
+              <a 
+                href="/studio" 
+                class="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white rounded-full font-bold hover:bg-orange-600 transition-colors"
+              >
+                Open Sanity Studio
+              </a>
+            </div>
+          ) : (
+            <div class="space-y-16">
+              {albums.map((album: any, albumIndex: number) => (
+                <div 
+                  class="scroll-fade-in"
+                  style={`animation-delay: ${albumIndex * 0.1}s;`}
+                >
+                  <!-- Album Header -->
+                  <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-3 flex items-center gap-3">
+                      <span class="text-orange-500">📸</span>
+                      {album.title}
+                    </h2>
+                    {album.description && (
+                      <p class="text-gray-400 text-lg mb-4">{album.description}</p>
+                    )}
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                      {album.location && (
+                        <span class="flex items-center gap-2">
+                          <MapPin size={16} class="text-orange-500" />
+                          {album.location}
+                        </span>
+                      )}
+                      {album.date && (
+                        <span class="flex items-center gap-2">
+                          <Calendar size={16} class="text-orange-500" />
+                          {formatDate(album.date)}
+                        </span>
+                      )}
+                      {album.tags && album.tags.length > 0 && (
+                        <div class="flex gap-2">
+                          {album.tags.map((tag: string) => (
+                            <span class="px-3 py-1 bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-full text-xs">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                 
+                  <div class="masonry-grid">
+                    {album.photos && album.photos.map((photo: any, photoIndex: number) => (
+                      <div 
+                        class="masonry-item group"
+                        style={`animation-delay: ${(albumIndex * 0.1) + (photoIndex * 0.05)}s;`}
+                      >
+                        <div class="relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-700 hover:border-orange-500/50 transition-all duration-300">
+                          <img
+                            src={urlFor(photo).width(800).url()}
+                            alt={album.title}
+                            class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .masonry-grid {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry-grid {
+      column-count: 3;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .masonry-grid {
+      column-count: 4;
+    }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

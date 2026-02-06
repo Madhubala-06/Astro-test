@@ -6,8 +6,9 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 export const sanityClient = createClient({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID || "YOUR_PROJECT_ID",
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || "production",
-  apiVersion: "2024-01-01", // Use today's date
-  useCdn: true, // `true` for faster, cached responses
+  apiVersion: "2024-01-01",
+  useCdn: true, 
+  perspective: 'published',
 });
 
 // Image URL Builder
