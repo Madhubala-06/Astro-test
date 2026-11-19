@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
-import { Camera, MapPin, Calendar } from 'lucide-astro';
+import Camera from 'lucide-astro/Camera';
+import MapPin from 'lucide-astro/MapPin';
+import Calendar from 'lucide-astro/Calendar';
 
 const albums = await sanityClient.fetch(`
   *[_type == "photoAlbum"] | order(date desc) {
@@ -52,13 +54,7 @@ const formatDate = (date: string) => {
             <div class="text-center py-20">
               <Camera size={80} class="mx-auto mb-6 text-gray-600" />
               <h3 class="text-3xl font-bold text-white mb-4">No Albums Yet</h3>
-              <p class="text-gray-400 text-lg mb-6">Create your first photo album in Sanity Studio</p>
-              <a 
-                href="/studio" 
-                class="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white rounded-full font-bold hover:bg-orange-600 transition-colors"
-              >
-                Open Sanity Studio
-              </a>
+              <p class="text-gray-400 text-lg mb-6">Photo albums will show up here soon.</p>
             </div>
           ) : (
             <div class="space-y-16">
@@ -114,6 +110,7 @@ const formatDate = (date: string) => {
                             alt={album.title}
                             class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
+                            decoding="async"
                           />
                         </div>
                       </div>

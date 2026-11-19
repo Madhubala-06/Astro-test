@@ -98,7 +98,7 @@ const renderContent = (content: any[]) => {
       }
     } else if (block._type === 'image') {
       const imageUrl = urlFor(block).width(1000).url();
-      return `<img src="${imageUrl}" alt="${block.alt || ''}" class="w-full rounded-lg my-8 border border-slate-700" />`;
+      return `<img src="${imageUrl}" alt="${block.alt || ''}" loading="lazy" decoding="async" class="w-full rounded-lg my-8 border border-slate-700" />`;
     }
     return '';
   }).join('');
@@ -115,8 +115,11 @@ const renderContent = (content: any[]) => {
         {post.coverImage ? (
           <>
             <img 
-              src={urlFor(post.coverImage).width(1920).height(1080).url()} 
+              src={urlFor(post.coverImage).width(1600).height(900).url()} 
               alt={post.title}
+              width="1600"
+              height="900"
+              fetchpriority="high"
               class="w-full h-full object-cover opacity-40"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/70 to-slate-900/30"></div>
@@ -260,6 +263,10 @@ const renderContent = (content: any[]) => {
                         <img 
                           src={urlFor(relatedPost.coverImage).width(400).height(250).url()} 
                           alt={relatedPost.title}
+                          width="400"
+                          height="250"
+                          loading="lazy"
+                          decoding="async"
                           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                       </div>

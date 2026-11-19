@@ -84,7 +84,7 @@ const content = pricing || {
 };
 ---
 
-<Layout title="Pricing - Layerpath">
+<Layout title="Pricing - Bilog">
   <main class="py-20">
     <div class="container mx-auto px-4">
       <!-- Header -->
@@ -99,6 +99,9 @@ const content = pricing || {
 
       <!-- Pricing Cards -->
       <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        {(!content.plans || content.plans.length === 0) && (
+          <p class="md:col-span-3 text-center text-gray-500">Plans are coming soon.</p>
+        )}
         {content.plans?.map((plan) => (
           <div
             class={`rounded-2xl p-8 ${
@@ -119,6 +122,7 @@ const content = pricing || {
                 {' '}{plan.billingPeriod}
               </span>
             </div>
+            {plan.ctaLink && plan.ctaText && (
             <a
               href={plan.ctaLink}
               class={`block text-center py-3 px-6 rounded-lg font-semibold transition ${
@@ -129,6 +133,7 @@ const content = pricing || {
             >
               {plan.ctaText}
             </a>
+            )}
             <ul class="mt-8 space-y-3">
               {plan.features?.map((feature) => (
                 <li class="flex items-center gap-2">
