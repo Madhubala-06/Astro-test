@@ -1,7 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -21,7 +21,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <ViewTransitions fallback="none" />
+    <ClientRouter fallback="none" />
     
     <!-- Theme initialization script (runs before page render to prevent flash) -->
     <script is:inline>
@@ -33,6 +33,38 @@ const {
     </script>
     <style is:global>
       @import "tailwindcss";
+
+      /* Colour names used by the pages (text-text-primary, bg-card-bg, ...).
+         They were never defined, so those elements had no colour. */
+      @theme {
+        --color-text-primary: #ffffff;
+        --color-text-secondary: #d1d5db;
+        --color-text-tertiary: #9ca3af;
+        --color-bg-primary: #1e293b;
+        --color-bg-tertiary: #334155;
+        --color-card-bg: rgba(15, 23, 42, 0.6);
+        --color-card-border: #334155;
+        --color-input-bg: #0f172a;
+        --color-input-border: #475569;
+        --color-input-placeholder: #94a3b8;
+        --color-button-secondary-bg: #334155;
+        --color-button-secondary-text: #e5e7eb;
+      }
+
+      html.light-theme {
+        --color-text-primary: #1e293b;
+        --color-text-secondary: #475569;
+        --color-text-tertiary: #64748b;
+        --color-bg-primary: #f8fafc;
+        --color-bg-tertiary: #e2e8f0;
+        --color-card-bg: #ffffff;
+        --color-card-border: #e2e8f0;
+        --color-input-bg: #ffffff;
+        --color-input-border: #cbd5e1;
+        --color-input-placeholder: #94a3b8;
+        --color-button-secondary-bg: #e2e8f0;
+        --color-button-secondary-text: #1e293b;
+      }
 
       html {
         scroll-behavior: smooth;
@@ -256,23 +288,14 @@ const {
     <Footer />
 
     <script>
-      // Intersection Observer for scroll animations
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, observerOptions);
-
-      // Observe all elements with scroll-fade-in class
-      document.querySelectorAll('.scroll-fade-in').forEach((el) => {
-        observer.observe(el);
+      // Scroll animations. Re-run after every client-side page change.
+      document.addEventListener('astro:page-load', () => {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.scroll-fade-in').forEach((el) => observer.observe(el));
       });
     </script>
   </body>

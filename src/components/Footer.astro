@@ -1,6 +1,10 @@
 ---
 import { sanityClient } from '../lib/sanity';
-import { Twitter, Linkedin, Github, Instagram, Link } from 'lucide-astro';
+import Twitter from 'lucide-astro/Twitter';
+import Linkedin from 'lucide-astro/Linkedin';
+import Github from 'lucide-astro/Github';
+import Instagram from 'lucide-astro/Instagram';
+import Link from 'lucide-astro/Link';
 
 const landingPage = await sanityClient.fetch(`
   *[_type == "landingPage"][0] {
@@ -42,18 +46,17 @@ const getSocialIcon = (platform: string) => {
           <ul class="space-y-2">
             <li><a href="/" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Home</a></li>
             <li><a href="/blog" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Blog</a></li>
-            <li><a href="#about" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">About</a></li>
-            <li><a href="#contact" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Contact</a></li>
+            <li><a href="/photography" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Photography</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="font-semibold text-white mb-4">Categories</h4>
           <ul class="space-y-2">
-            <li><a href="/blog?category=technology" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Technology</a></li>
-            <li><a href="/blog?category=design" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Design</a></li>
-            <li><a href="/blog?category=tutorial" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Tutorials</a></li>
-            <li><a href="/blog?category=personal" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Personal</a></li>
+            <li><a href="/blog?category=travel" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Must Visit Places</a></li>
+            <li><a href="/blog?category=food" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Must Try Things</a></li>
+            <li><a href="/blog?category=technology" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Tech Tips</a></li>
+            <li><a href="/blog?category=personal" class="text-gray-400 hover:text-orange-500 transition-colors text-sm">Life &amp; Experiences</a></li>
           </ul>
         </div>
 
@@ -70,23 +73,22 @@ const getSocialIcon = (platform: string) => {
                     rel="noopener noreferrer"
                     class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300 text-gray-400 hover:text-white"
                     title={link.platform}
+                    aria-label={link.platform}
                   >
                     <IconComponent size={20} />
                   </a>
                 );
               })
             ) : (
-              <>
-                <a href="#" class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300 text-gray-400 hover:text-white">
-                  <Twitter size={20} />
-                </a>
-                <a href="#" class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300 text-gray-400 hover:text-white">
-                  <Linkedin size={20} />
-                </a>
-                <a href="#" class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300 text-gray-400 hover:text-white">
-                  <Github size={20} />
-                </a>
-              </>
+              <a
+                href="https://github.com/Madhubala-06"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 hover:scale-110 transition-all duration-300 text-gray-400 hover:text-white"
+              >
+                <Github size={20} />
+              </a>
             )}
           </div>
         </div>

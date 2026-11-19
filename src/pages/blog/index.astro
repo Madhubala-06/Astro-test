@@ -2,7 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import { sanityClient, urlFor } from '../../lib/sanity';
-import { CalendarDays, BookOpen, FileText } from 'lucide-astro';
+import CalendarDays from 'lucide-astro/CalendarDays';
+import BookOpen from 'lucide-astro/BookOpen';
+import FileText from 'lucide-astro/FileText';
 
 // Fetch all blog posts with optimized query
 const allPosts = await sanityClient.fetch(`
@@ -86,6 +88,10 @@ const formatDate = (date: string) => {
                   <img 
                     src={urlFor(post.coverImage).width(500).height(300).url()} 
                     alt={post.title}
+                    width="500"
+                    height="300"
+                    loading="lazy"
+                    decoding="async"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   {post.category && (
@@ -108,11 +114,11 @@ const formatDate = (date: string) => {
                   )}
                 </div>
                 <h3 class="text-lg font-bold mb-3 text-white group-hover:text-orange-500 transition-colors duration-300 line-clamp-2">
-                  <a href={`/blog/${post.slug.current}`}>{post.title}</a>
+                  <a href={`/blog/${post.slug}`}>{post.title}</a>
                 </h3>
                 <p class="text-gray-400 mb-4 line-clamp-2 text-sm">{post.excerpt}</p>
                 <a 
-                  href={`/blog/${post.slug.current}`}
+                  href={`/blog/${post.slug}`}
                   class="inline-flex items-center gap-2 text-orange-500 font-semibold hover:text-orange-400 transition-colors text-sm"
                 >
                   Read More →
@@ -122,6 +128,7 @@ const formatDate = (date: string) => {
           ))}
         </div>
       )}
+      <p id="empty-category" class="hidden text-center text-gray-400 text-lg py-20">No posts in this category yet. <a href="/blog" class="text-orange-500 font-semibold hover:text-orange-400">See all posts</a></p>
     </div>
   </section>
 
@@ -131,6 +138,8 @@ const formatDate = (date: string) => {
 </BaseLayout>
 
 <script>
+  // Re-run on every page load, including client-side navigation (Astro view transitions)
+  document.addEventListener('astro:page-load', () => {
   // Category names mapping
   const categoryNames: Record<string, string> = {
     'travel': 'Must Visit Places',
@@ -185,15 +194,18 @@ const formatDate = (date: string) => {
     }
 
     // Filter posts
+    let shown = 0;
     postCards.forEach(card => {
       const postCategory = card.getAttribute('data-category');
       if (category === 'all' || postCategory === category) {
         (card as HTMLElement).style.display = 'block';
+        shown++;
         card.classList.add('animate-fadeIn');
       } else {
         (card as HTMLElement).style.display = 'none';
       }
     });
+    document.getElementById('empty-category')?.classList.toggle('hidden', shown > 0);
   }
 
   function updateActiveButton(category: string) {
@@ -208,6 +220,8 @@ const formatDate = (date: string) => {
       }
     });
   }
+
+  });
 </script>
 
 <style>

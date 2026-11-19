@@ -1,5 +1,5 @@
 import { createClient } from "@sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 // Sanity Client Configuration
@@ -12,10 +12,11 @@ export const sanityClient = createClient({
 });
 
 // Image URL Builder
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 
 export function urlFor(source: SanityImageSource) {
-  return builder.image(source);
+  // auto("format") serves WebP/AVIF when the browser supports it
+  return builder.image(source).auto("format").quality(75);
 }
 
 // Helper function to fetch data
